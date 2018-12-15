@@ -4,6 +4,9 @@ NIRAS : With the optimization of production processes such as news planning, col
 
 本项目的目标是以最快的速度将JASON文件导入Elasticsearch库中。此项目是NIRAS项目中的子项目之一。NIRAS: 随着新闻策划、采集及发布等生产流程的优化，新闻内容数量呈现爆炸式增长。此外，新闻产品的制作对历史新闻资料的依赖程度很高，需要有准确、快速、全面的检索系统做支持。尽管行业内出现了一批商业化产品，但是其收费高、定制难等问题限制了检索服务的进一步优化。项目目标是，基于开源系统构建一套开源、免费且实用新闻信息检索及分析系统（NIRAS），能够满足新闻产品制作的检索需求，为新闻信息检索探索一条新路。
 
+# Attention
+Due to the ES's official statement that "We plan on deprecating the TransportClient in Elasticsearch 7.0 and removing it completely in 8.0.", json2es is completely built on "Java High Level REST Client".
+
 # Basics
 1. JDK 1.8
 2. Spring Boot 2.1.1
