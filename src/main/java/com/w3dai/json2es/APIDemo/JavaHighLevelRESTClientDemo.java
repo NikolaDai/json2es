@@ -2,6 +2,8 @@ package com.w3dai.json2es.APIDemo;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -42,12 +44,15 @@ public class JavaHighLevelRESTClientDemo {
                 "\"message\":\"trying out Elasticsearch\"" +
                 "}";
         request.source(jsonString, XContentType.JSON);
+
+
         //the following is synchronous execution
         //IndexResponse indexResponse = client.index(request, RequestOptions.DEFAULT);
 
+
         //the following is asynchronous execution
         //https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-document-index.html
-        ActionListener listener = new ActionListener<IndexResponse>() {
+        ActionListener<IndexResponse> listener = new ActionListener<IndexResponse>() {
             @Override
             public void onResponse(IndexResponse indexResponse) {
                 System.out.println("success");
@@ -58,9 +63,19 @@ public class JavaHighLevelRESTClientDemo {
                 System.out.println("failure");
             }
         };
-
         client.indexAsync(request, RequestOptions.DEFAULT, listener);
 
+
+        //https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-document-get.html
+        GetRequest getRequest = new GetRequest(
+                "posts",
+                "doc",
+                "1");
+
+        //synchronous execution
+        //GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
+
+        //Like the index API, the GET request also has a asynchronous fashion.
 
     }
 
