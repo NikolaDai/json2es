@@ -7,7 +7,6 @@ import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.bulk.*;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateResponse;
@@ -25,7 +24,6 @@ import java.util.function.BiConsumer;
 
 public class JavaHighLevelRESTClientDemo {
     private static RestHighLevelClient client;
-
     /*
     * create the connection to the elasticsearch.
     * */
@@ -43,6 +41,7 @@ public class JavaHighLevelRESTClientDemo {
     }
 
     public static void main(String[] args) throws Exception{
+
         createClient();
         IndexRequest request = new IndexRequest(
                 "posts",
@@ -122,24 +121,22 @@ public class JavaHighLevelRESTClientDemo {
             @Override
             public void beforeBulk(long executionId, BulkRequest request) {
                 int numberOfActions = request.numberOfActions();
-                logger.debug("Executing bulk [{}] with {} requests",
-                        executionId, numberOfActions);
+                System.out.println("Executing bulk"+  executionId +" with "+ numberOfActions +"requests");
             }
 
             @Override
             public void afterBulk(long executionId, BulkRequest request,
                                   BulkResponse response) {
                 if (response.hasFailures()) {
-                    logger.warn("Bulk [{}] executed with failures", executionId);
+                    System.out.println("Bulk"+ executionId + "executed with failures", );
                 } else {
-                    logger.debug("Bulk [{}] completed in {} milliseconds",
-                            executionId, response.getTook().getMillis());
+                    System.out.println("Bulk "+ executionId + " completed in " + response.getTook().getMillis() + " milliseconds");
                 }
             }
 
             @Override
             public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-                logger.error("Failed to execute bulk", failure);
+                System.out.println("Failed to execute bulk");
             }
         };
 
