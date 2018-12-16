@@ -128,7 +128,7 @@ public class JavaHighLevelRESTClientDemo {
             public void afterBulk(long executionId, BulkRequest request,
                                   BulkResponse response) {
                 if (response.hasFailures()) {
-                    System.out.println("Bulk"+ executionId + "executed with failures", );
+                    System.out.println("Bulk"+ executionId + "executed with failures");
                 } else {
                     System.out.println("Bulk "+ executionId + " completed in " + response.getTook().getMillis() + " milliseconds");
                 }
