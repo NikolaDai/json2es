@@ -1,6 +1,5 @@
 package com.w3dai.json2es;
 
-import com.w3dai.json2es.APIDemo.JavaHighLevelRESTClientDemo;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BackoffPolicy;
@@ -25,6 +24,7 @@ public class Json2esAction {
         //Read the file of "dataSet01.txt" and write to es
         String filePath =  "./dataSet02.txt";
 
+        //we could start two instances in one machine mapping to 9200 and 9201
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(
                         new HttpHost("localhost", 9200, "http"),
