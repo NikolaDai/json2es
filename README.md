@@ -19,6 +19,7 @@ other fields' data.
 
 # Syllabus
 1. learn the java api of Elasticsearch, please refer to https://www.elastic.co;
+2. learn the mapping of Elasticsearch which could borrow a few codes from our previous AIAS project.
 
 # Directory Instruction 
 |---APIDemo(ES API DEMO codes)

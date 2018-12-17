@@ -20,9 +20,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class Json2esAction {
-    public void readJasonAndWriteToES() throws IOException, InterruptedException {
+    public void readJasonAndWriteToES(String filePath) throws IOException, InterruptedException {
         //Read the file of "dataSet01.txt" and write to es
-        String filePath =  "./dataSet02.txt";
 
         //we could start two instances in one machine mapping to 9200 and 9201
         RestHighLevelClient client = new RestHighLevelClient(
