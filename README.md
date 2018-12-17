@@ -30,3 +30,8 @@ Welcome any modification to the existing codes
 
 #Useful References
 <<Elasticsearch: The Definitive Guide>> https://www.elastic.co/guide/en/elasticsearch/guide/master/index.html
+
+#Problems Solved
+1. Debug Repro:"ElasticsearchStatusException[Unable to parse response body]; nested: ResponseException[method [POST], host [http://localhost:9200], URI [/_bulk?timeout=1m], status line [HTTP/1.1 413 Request Entity Too Large]
+
+Solution:a, changed the elasticsearch/6.5.3/config/jvm.option -Xms4g -Xmx8g
