@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class Json2esAction {
-    public void readJasonAndWriteToES() throws  IOException{
+    public void readJasonAndWriteToES() throws IOException, InterruptedException {
         //Read the file of "dataSet01.txt" and write to es
-        String filePath =  "./dataSet01.txt";
+        String filePath =  "./dataSet02.txt";
 
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(
@@ -51,19 +51,18 @@ public class Json2esAction {
 
             @Override
             public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-                System.out.println("Failed to execute bulk"+ "executionId! " + failure.toString());
+                System.out.println("Failed to execute bulk"+ executionId +"! " + failure.toString());
 
             }
         };
 
-        BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer =
-                (requestTest, bulkListener) -> client.bulkAsync(bulkRequest, RequestOptions.DEFAULT, bulkListener);
+        BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer = (requestTest, bulkListener) -> client.bulkAsync(bulkRequest, RequestOptions.DEFAULT, bulkListener);
 
         BulkProcessor.Builder builder = BulkProcessor.builder(bulkConsumer, testBulkListener);
-        builder.setBulkActions(500);
-        builder.setBulkSize(new ByteSizeValue(1L, ByteSizeUnit.MB));
+        builder.setBulkActions(100000);
+        builder.setBulkSize(new ByteSizeValue(50L, ByteSizeUnit.MB));
         builder.setConcurrentRequests(0);
-        builder.setFlushInterval(TimeValue.timeValueSeconds(10L));
+        //builder.setFlushInterval(TimeValue.timeValueSeconds(10L));
         builder.setBackoffPolicy(BackoffPolicy
                 .constantBackoff(TimeValue.timeValueSeconds(1L), 3));
 
@@ -78,26 +77,30 @@ public class Json2esAction {
 
                 int i = 0;
                 while ((lineTxt = br.readLine()) != null) {
-                    lineTxt = lineTxt.replaceAll("\\\"", "\\\\\"");
-                    System.out.println(lineTxt);
+                    //lineTxt = lineTxt.replaceAll("\\\"", "\\\\\"");
+                    int j = ++i;
+                    //System.out.println(lineTxt);
                     //Plan to write to ES here
-                    bulkProcessor.add(new IndexRequest("articles", "article", String.valueOf(++i)).source(lineTxt, XContentType.JSON));
+                    bulkRequest.add(new IndexRequest("articles", "article", String.valueOf(j)).source(lineTxt, XContentType.JSON));
+                    bulkProcessor.add(new IndexRequest("articles", "article", String.valueOf(j)).source(lineTxt, XContentType.JSON));
+
                 }
 
                 br.close();
-                boolean terminated = bulkProcessor.awaitClose(30L, TimeUnit.SECONDS);
-
-                if(terminated){
-                    System.out.println("Successfully to import the json file to Elasticsearch!");
-                }
-                else{
-                    System.out.println("Failed to import the json file to Elasticsearch!");
-                }
             } else {
                 System.out.println("文件不存在!");
             }
         } catch (Exception e) {
             System.out.println("文件读取错误!");
+        }
+
+        boolean terminated = bulkProcessor.awaitClose(30L, TimeUnit.SECONDS);
+
+        if(terminated){
+            System.out.println("Successfully to import the json file to Elasticsearch!");
+        }
+        else{
+            System.out.println("Failed to import the json file to Elasticsearch!");
         }
 
         client.close();
