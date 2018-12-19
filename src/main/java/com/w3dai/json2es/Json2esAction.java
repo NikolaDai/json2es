@@ -1,6 +1,7 @@
 package com.w3dai.json2es;
 
 import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BackoffPolicy;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -9,6 +10,7 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.ByteSizeUnit;
 import org.elasticsearch.common.unit.ByteSizeValue;
@@ -26,8 +28,16 @@ public class Json2esAction {
         //we could start two instances in one machine mapping to 9200 and 9201
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost("localhost", 9200, "http"),
-                        new HttpHost("localhost", 9201, "http")));
+                        new HttpHost("localhost", 9200, "http")).setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
+                    @Override
+                    public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
+                        requestConfigBuilder.setConnectTimeout(50000);
+                        requestConfigBuilder.setSocketTimeout(50000);
+                        requestConfigBuilder.setConnectionRequestTimeout(1000);
+                        return requestConfigBuilder;
+                    }
+                }).setMaxRetryTimeoutMillis(5*60*1000));
+
 
         BulkRequest bulkRequest = new BulkRequest();
 
@@ -58,10 +68,10 @@ public class Json2esAction {
         BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer = (requestTest, bulkListener) -> client.bulkAsync(bulkRequest, RequestOptions.DEFAULT, bulkListener);
 
         BulkProcessor.Builder builder = BulkProcessor.builder(bulkConsumer, testBulkListener);
-        builder.setBulkActions(100000);
-        builder.setBulkSize(new ByteSizeValue(50L, ByteSizeUnit.MB));
-        builder.setConcurrentRequests(0);
-        //builder.setFlushInterval(TimeValue.timeValueSeconds(10L));
+        builder.setBulkActions(1000);
+        builder.setBulkSize(new ByteSizeValue(10L, ByteSizeUnit.MB));
+        builder.setConcurrentRequests(5);
+        builder.setFlushInterval(TimeValue.timeValueSeconds(10L));
         builder.setBackoffPolicy(BackoffPolicy
                 .constantBackoff(TimeValue.timeValueSeconds(1L), 3));
 
@@ -82,7 +92,6 @@ public class Json2esAction {
                     //Plan to write to ES here
                     bulkRequest.add(new IndexRequest("articles", "article", String.valueOf(j)).source(lineTxt, XContentType.JSON));
                     bulkProcessor.add(new IndexRequest("articles", "article", String.valueOf(j)).source(lineTxt, XContentType.JSON));
-
                 }
 
                 br.close();
