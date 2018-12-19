@@ -30,9 +30,14 @@ other fields' data.
 Welcome any modification to the existing codes
 
 #Useful References
-<<Elasticsearch: The Definitive Guide>> https://www.elastic.co/guide/en/elasticsearch/guide/master/index.html
+1. <<Elasticsearch: The Definitive Guide>> https://www.elastic.co/guide/en/elasticsearch/guide/master/index.html
+2. Elaboration on Springboot's Configuration https://www.cnblogs.com/shenwenbo/p/8304654.html
 
 #Problems Solved
 1. Debug Repro:"ElasticsearchStatusException[Unable to parse response body]; nested: ResponseException[method [POST], host [http://localhost:9200], URI [/_bulk?timeout=1m], status line [HTTP/1.1 413 Request Entity Too Large]
 
-Solution: Change the configuration of elasticsearch in the file of /config/elasticsearch.yml : add http.max_content_length: 500mb, meanwhile, add spring.servlet.multipart.max-file-size=500MB;spring.servlet.multipart.max-request-size=500MB to the application.properties.
+Solution: Change the configuration of elasticsearch in the file of /config/elasticsearch.yml : add http.max_content_length: 500mb
+
+2. Debug Repro:"java.net.SocketTimeoutException: 30,000 milliseconds timeout on connection http-outgoing-0 [ACTIVE]"
+
+Solution: Set builder.setBulkActions() from 1000000 to 10000;
