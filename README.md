@@ -22,7 +22,8 @@ Name your data source file as "dataSet01.txt", and then run Json2esAction. Good 
 
 # Syllabus
 1. learn the java api of Elasticsearch, please refer to https://www.elastic.co;
-2. learn the mapping of Elasticsearch which could borrow a few codes from our previous AIAS project.
+2. learn the mapping of Elasticsearch which could borrow a few codes from our previous ElasticSpring project.
+3. learn the installation of HanLP plugin at https://github.com/pengcong90/elasticsearch-analysis-hanlp
 
 # Directory Instruction 
 |---APIDemo(ES API DEMO codes)

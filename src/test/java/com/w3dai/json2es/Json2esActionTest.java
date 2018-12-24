@@ -6,7 +6,9 @@ public class Json2esActionTest {
 
     public static void main(String[] args) throws IOException, InterruptedException
     {
-        Json2esAction json2esActio = new Json2esAction();
-        json2esActio.readJasonAndWriteToES("./dataSet02.txt");
+        CreateIndexFromData createIndexFromData = new CreateIndexFromData();
+        createIndexFromData.CreateIndex();
+        Json2esAction json2esAction = new Json2esAction();
+        json2esAction.readJasonAndWriteToES("./dataSet02.txt");
     }
 }
