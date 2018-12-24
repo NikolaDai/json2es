@@ -17,6 +17,9 @@ Due to the ES's official statement that "We plan on deprecating the TransportCli
 The dataSet01.txt in this project is a json format file which could be used as the input file to json2es. The data in the body field includes some
 other fields' data.
 
+# Usage
+Name your data source file as "dataSet01.txt", and then run Json2esAction. Good luck!
+
 # Syllabus
 1. learn the java api of Elasticsearch, please refer to https://www.elastic.co;
 2. learn the mapping of Elasticsearch which could borrow a few codes from our previous AIAS project.
@@ -32,6 +35,7 @@ Welcome any modification to the existing codes
 #Useful References
 1. <<Elasticsearch: The Definitive Guide>> https://www.elastic.co/guide/en/elasticsearch/guide/master/index.html
 2. Elaboration on Springboot's Configuration https://www.cnblogs.com/shenwenbo/p/8304654.html
+3. ES大批量写入提高性能的策略 https://blog.csdn.net/qq_37910578/article/details/81778359
 
 #Problems Solved
 1. Debug Repro:"ElasticsearchStatusException[Unable to parse response body]; nested: ResponseException[method [POST], host [http://localhost:9200], URI [/_bulk?timeout=1m], status line [HTTP/1.1 413 Request Entity Too Large]

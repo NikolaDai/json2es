@@ -32,14 +32,11 @@ public class Json2esAction {
                     @Override
                     public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
                         requestConfigBuilder.setConnectTimeout(50000);
-                        requestConfigBuilder.setSocketTimeout(50000);
-                        requestConfigBuilder.setConnectionRequestTimeout(1000);
+                        requestConfigBuilder.setSocketTimeout(100000);
+                        requestConfigBuilder.setConnectionRequestTimeout(50000);
                         return requestConfigBuilder;
                     }
                 }).setMaxRetryTimeoutMillis(5*60*1000));
-
-
-        BulkRequest bulkRequest = new BulkRequest();
 
         BulkProcessor.Listener testBulkListener = new BulkProcessor.Listener() {
             @Override
@@ -65,15 +62,17 @@ public class Json2esAction {
             }
         };
 
-        BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer = (requestTest, bulkListener) -> client.bulkAsync(bulkRequest, RequestOptions.DEFAULT, bulkListener);
+        //More attention must be paid here about the usage of BiConsumer;
+        BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer = (bulkRequest, bulkListener) -> client.bulkAsync(bulkRequest, RequestOptions.DEFAULT, bulkListener);
 
         BulkProcessor.Builder builder = BulkProcessor.builder(bulkConsumer, testBulkListener);
-        builder.setBulkActions(1000);
+        builder.setBulkActions(10000);
         builder.setBulkSize(new ByteSizeValue(10L, ByteSizeUnit.MB));
         builder.setConcurrentRequests(5);
-        builder.setFlushInterval(TimeValue.timeValueSeconds(10L));
+        builder.setFlushInterval(TimeValue.timeValueSeconds(30L));
         builder.setBackoffPolicy(BackoffPolicy
                 .constantBackoff(TimeValue.timeValueSeconds(1L), 3));
+
 
         BulkProcessor bulkProcessor = builder.build();
 
@@ -83,15 +82,10 @@ public class Json2esAction {
                 InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "utf-8");
                 BufferedReader br = new BufferedReader(isr);
                 String lineTxt;
-
-                int i = 0;
+                int i = 1;
                 while ((lineTxt = br.readLine()) != null) {
-                    //lineTxt = lineTxt.replaceAll("\\\"", "\\\\\"");
-                    int j = ++i;
-                    //System.out.println(lineTxt);
-                    //Plan to write to ES here
-                    bulkRequest.add(new IndexRequest("articles", "article", String.valueOf(j)).source(lineTxt, XContentType.JSON));
-                    bulkProcessor.add(new IndexRequest("articles", "article", String.valueOf(j)).source(lineTxt, XContentType.JSON));
+                    IndexRequest indexRequest = new IndexRequest("articles", "article", String.valueOf(i++)).source(lineTxt, XContentType.JSON);
+                    bulkProcessor.add(indexRequest);
                 }
 
                 br.close();
